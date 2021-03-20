@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/danielaj28/Within-Renamer/issues"
   },
-  "homepage": "https://github.com/danielaj28/Within-Renamer#readme"
+  "homepage": "https://github.com/danielaj28/Within-Renamer#readme",
+  "dependencies": {
+    "csv-parse": "^4.15.3"
+  }
 }
