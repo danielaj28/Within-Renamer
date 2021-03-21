@@ -1,5 +1,11 @@
 const parse = require("csv-parse");
 const fs = require("fs");
+const readline = require("readline");
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
 
 let substitutions;
 
@@ -48,7 +54,24 @@ function getFiles() {
     console.log(
       `${files.length} files found in target directory ${targetDirectory}`
     );
-    replaceInFiles(files);
+
+    rl.question(
+      `Are you sure you wish to check ${substitutions.length} substitutions in ${files.length} files? (yes to continue) `,
+      function (resp) {
+        rl.close();
+        if (
+          resp.toLocaleLowerCase() == "yes" ||
+          resp.toLocaleLowerCase() == "y"
+        ) {
+          replaceInFiles(files);
+        } else {
+          console.log(
+            "Did not receive a yes to go ahead with the replacements, terminating."
+          );
+          return;
+        }
+      }
+    );
   } catch (error) {
     console.error(`ERROR Getting files from target directory: ${error}`);
     return;
