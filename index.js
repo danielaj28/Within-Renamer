@@ -1,6 +1,7 @@
 const parse = require("csv-parse");
 const fs = require("fs");
 const readline = require("readline");
+const replacer = require(`./modules/replacer.js`);
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -15,38 +16,18 @@ if (substitutionFilename == undefined || targetDirectory == undefined) {
   console.error(
     "Invalid parameters, requires node . [substitutionfilename] [target directory]"
   );
+  rl.close();
   return;
 }
 
-//Get substitutions
-try {
-  substitutions = fs.readFileSync(substitutionFilename);
-} catch (error) {
-  console.error(`ERROR locating the substitutions file: ${error}`);
-  return;
-}
+replacer.getSubstitutions(substitutionFilename, (error, data) => {
+  substitutions = data;
 
-//Parse substitutions
-try {
-  const input = substitutions;
-
-  parse(
-    input,
-    {
-      comment: "#",
-    },
-    function (err, output) {
-      substitutions = output;
-      console.log(
-        `${substitutions.length} substitutions instructions found in ${substitutionFilename}`
-      );
-      getFiles();
-    }
+  console.log(
+    `${substitutions.length} substitutions instructions found in ${substitutionFilename}`
   );
-} catch (error) {
-  console.error(`ERROR parsing the substitutions file: ${error}`);
-  return;
-}
+  getFiles();
+});
 
 function getFiles() {
   try {
