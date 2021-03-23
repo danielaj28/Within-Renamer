@@ -1,5 +1,8 @@
 # Within-Renamer
 
+![Test](https://github.com/danielaj28/Within-Renamer/actions/workflows/node.js.yml/badge.svg)
+![CodeQL](https://github.com/danielaj28/Within-Renamer/actions/workflows/codeql-analysis.yml/badge.svg)
+
 Given a list of substitutions, replace all instances of each substitution target within targeted files. Built for times when you need to replace lots of things in lots of places.
 
 ### Built With
