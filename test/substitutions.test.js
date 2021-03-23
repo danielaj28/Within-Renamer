@@ -1,7 +1,7 @@
-const replacer = require("../modules/replacer");
+const substitute = require("../modules/substitutions");
 
 test("Parse Good CSV", () => {
-  replacer.getSubstitutions("./example/subs.csv", (error, response) => {
+  substitute.getSubstitutions("./example/subs.csv", (error, response) => {
     const target = [
       ["before", "after"],
       ["target", "replacement"],
@@ -13,7 +13,7 @@ test("Parse Good CSV", () => {
 });
 
 test("Missing Sub File", () => {
-  replacer.getSubstitutions("./example/notfound.csv", (error, response) => {
+  substitute.getSubstitutions("./example/notfound.csv", (error, response) => {
     expect(error).toEqual(
       `ERROR locating the substitutions file: Error: ENOENT: no such file or directory, open './example/notfound.csv'`
     );

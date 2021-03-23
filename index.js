@@ -1,7 +1,7 @@
 const parse = require("csv-parse");
 const fs = require("fs");
 const readline = require("readline");
-const replacer = require(`./modules/replacer.js`);
+const substitute = require(`./modules/substitutions.js`);
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -20,7 +20,7 @@ if (substitutionFilename == undefined || targetDirectory == undefined) {
   return;
 }
 
-replacer.getSubstitutions(substitutionFilename, (error, data) => {
+substitute.getSubstitutions(substitutionFilename, (error, data) => {
   substitutions = data;
 
   console.log(
