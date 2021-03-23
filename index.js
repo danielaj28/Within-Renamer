@@ -1,4 +1,3 @@
-const parse = require("csv-parse");
 const fs = require("fs");
 const readline = require("readline");
 const substitute = require(`./modules/substitutions.js`);
@@ -21,6 +20,12 @@ if (substitutionFilename == undefined || targetDirectory == undefined) {
 }
 
 substitute.getSubstitutions(substitutionFilename, (error, data) => {
+  if (error != undefined) {
+    console.error(error);
+    rl.close();
+    return;
+  }
+
   substitutions = data;
 
   console.log(
