@@ -9,7 +9,13 @@ const rl = readline.createInterface({
 
 let substitutions;
 
-let [program, startIn, substitutionFilename, targetDirectory] = process.argv;
+let [
+  program,
+  startIn,
+  substitutionFilename,
+  targetDirectory,
+  filenameFilter,
+] = process.argv;
 
 if (substitutionFilename == undefined || targetDirectory == undefined) {
   console.error(
@@ -37,9 +43,19 @@ substitute.getSubstitutions(substitutionFilename, (error, data) => {
 function getFiles() {
   try {
     let files = fs.readdirSync(targetDirectory);
+
+    if (filenameFilter != null) {
+      files = files.filter((fn) => fn.indexOf(filenameFilter) != -1);
+    }
+
     console.log(
       `${files.length} files found in target directory ${targetDirectory}`
     );
+
+    if (files.length == 0) {
+      rl.close();
+      return;
+    }
 
     rl.question(
       `Are you sure you wish to check ${substitutions.length} substitutions in ${files.length} files? (yes to continue) `,

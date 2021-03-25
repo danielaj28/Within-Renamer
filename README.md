@@ -20,9 +20,9 @@ This section should list any major frameworks that you built your project using.
 
 ## Usage
 
-`node . [substitution file] [target directory]`
+`node . [substitution file] [target directory] [filename filter]`
 
-The substitution file should look like this:
+Substitution file - should look like this:
 
 ```csv
 before,after
@@ -30,6 +30,10 @@ target,replacement
 one,two
 apple,banana
 ```
+
+Target directory - should end with a backslash
+
+Filename filter (optional) - Filters down to only filenames that contain this text
 
 The program will go through each file in the target directory and rename every instance of each target value with it's corrosponding replacement value.
 
