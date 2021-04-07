@@ -37,35 +37,50 @@ substitute.getSubstitutions(substitutionFilename, (error, data) => {
   console.log(
     `${substitutions.length} substitutions instructions found in ${substitutionFilename}`
   );
-  getFiles();
+  processFiles();
 });
 
-function getFiles() {
-  try {
-    let files = fs.readdirSync(targetDirectory);
+function getAllFiles(path, filenameFilter) {
+  let filePaths = [];
 
-    if (filenameFilter != null) {
-      files = files.filter((fn) => fn.indexOf(filenameFilter) != -1);
+  fs.readdirSync(path).forEach((fsObject) => {
+    if (fsObject.indexOf(".") != -1) {
+      if (
+        filenameFilter == undefined ||
+        fsObject.indexOf(filenameFilter) != -1
+      ) {
+        filePaths.push(`${path}${fsObject}`);
+      }
+    } else {
+      filePaths = filePaths.concat(getAllFiles(`${path}${fsObject}\\`));
     }
+  });
+
+  return filePaths;
+}
+
+function processFiles() {
+  try {
+    let filePaths = getAllFiles(targetDirectory, filenameFilter);
 
     console.log(
-      `${files.length} files found in target directory ${targetDirectory}`
+      `${filePaths.length} files found in target directory ${targetDirectory}`
     );
 
-    if (files.length == 0) {
+    if (filePaths.length == 0) {
       rl.close();
       return;
     }
 
     rl.question(
-      `Are you sure you wish to check ${substitutions.length} substitutions in ${files.length} files? (yes to continue) `,
+      `Are you sure you wish to check ${substitutions.length} substitutions in ${filePaths.length} files? (yes to continue) `,
       function (resp) {
         rl.close();
         if (
           resp.toLocaleLowerCase() == "yes" ||
           resp.toLocaleLowerCase() == "y"
         ) {
-          replaceInFiles(files);
+          replaceInFiles(filePaths);
         } else {
           console.log(
             "Did not receive a yes to go ahead with the replacements, terminating."
@@ -80,11 +95,11 @@ function getFiles() {
   }
 }
 
-function replaceInFiles(fileNames) {
-  fileNames.forEach((fileName) => {
-    fs.readFile(`${targetDirectory}${fileName}`, {}, (error, data) => {
+function replaceInFiles(filePaths) {
+  filePaths.forEach((filePath) => {
+    fs.readFile(`${filePath}`, {}, (error, data) => {
       if (error != null) {
-        console.error(`Error reading file: ${filename}\nError: ${error}`);
+        console.error(`Error reading file: ${filePath}\nError: ${error}`);
         return;
       }
 
@@ -95,12 +110,12 @@ function replaceInFiles(fileNames) {
         data = data.replace(target, replacement);
       });
 
-      fs.writeFile(`${targetDirectory}${fileName}`, data, (error) => {
+      fs.writeFile(`${filePath}`, data, (error) => {
         if (error != null) {
-          console.error(`Error writing to file: ${filename}\nError: ${error}`);
+          console.error(`Error writing to file: ${filePath}\nError: ${error}`);
           return;
         }
-        console.log(`${fileName} replacements completed!`);
+        console.log(`${filePath} replacements completed!`);
       });
     });
   });
