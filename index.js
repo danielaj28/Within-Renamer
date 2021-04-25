@@ -1,5 +1,6 @@
 const fs = require("fs");
 const readline = require("readline");
+const files = require(`./modules/files.js`);
 const substitute = require(`./modules/substitutions.js`);
 
 const rl = readline.createInterface({
@@ -9,6 +10,7 @@ const rl = readline.createInterface({
 
 let substitutions;
 
+//Load parameters
 let [
   program,
   startIn,
@@ -18,20 +20,14 @@ let [
 ] = process.argv;
 
 if (substitutionFilename == undefined || targetDirectory == undefined) {
-  console.error(
+  handleError(
     "Invalid parameters, requires node . [substitutionfilename] [target directory]"
   );
-  rl.close();
-  return;
 }
 
-substitute.getSubstitutions(substitutionFilename, (error, data) => {
-  if (error != undefined) {
-    console.error(error);
-    rl.close();
-    return;
-  }
-
+//Begin
+files.getCSV(substitutionFilename, (data, error) => {
+  handleError(error);
   substitutions = data;
 
   console.log(
@@ -40,6 +36,16 @@ substitute.getSubstitutions(substitutionFilename, (error, data) => {
   processFiles();
 });
 
+//Termination of application upon error
+function handleError(error) {
+  if (error != undefined) {
+    console.error(error);
+    rl.close();
+    return;
+  }
+}
+
+//Recursively return paths of filenames within target directory and filter
 function getAllFiles(path, filenameFilter) {
   let filePaths = [];
 
@@ -59,6 +65,7 @@ function getAllFiles(path, filenameFilter) {
   return filePaths;
 }
 
+//Stats and confirmation before proceeding with replacements
 function processFiles() {
   try {
     let filePaths = getAllFiles(targetDirectory, filenameFilter);
@@ -95,6 +102,7 @@ function processFiles() {
   }
 }
 
+//read each file, perform substitutions, write file
 function replaceInFiles(filePaths) {
   filePaths.forEach((filePath) => {
     fs.readFile(`${filePath}`, {}, (error, data) => {
