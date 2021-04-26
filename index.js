@@ -43,6 +43,7 @@ function handleError(error) {
   if (error != undefined) {
     console.error(error);
     rl.close();
+    process.exit(1);
   }
 }
 
