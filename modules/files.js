@@ -1,12 +1,13 @@
 const parse = require("csv-parse");
 const fs = require("fs");
 
-//Parse CSV data from filename
-exports.getCSV = (filename, callback) => {
+//Read data from filename
+exports.readFile = (filename, callback) => {
   let data;
 
   try {
     data = fs.readFileSync(filename);
+    callback(data, undefined);
   } catch (error) {
     callback(
       undefined,
@@ -14,7 +15,10 @@ exports.getCSV = (filename, callback) => {
     );
     return;
   }
+};
 
+//Parse CSV data from string
+exports.parseCSV = (data, callback) => {
   try {
     parse(
       data,
@@ -23,15 +27,12 @@ exports.getCSV = (filename, callback) => {
       },
       function (error1, output) {
         if (error1 != undefined) {
-          error1 = `ERROR parsing CSV data from ${filename}. ${error1}`;
+          error1 = `ERROR parsing CSV data. ${error1}`;
         }
         callback(output, error1);
       }
     );
   } catch (error) {
-    callback(
-      undefined,
-      `ERROR cannot parse data from file ${filename}. ${error}`
-    );
+    callback(undefined, `ERROR cannot parse data. ${error}`);
   }
 };

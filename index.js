@@ -26,14 +26,16 @@ if (substitutionFilename == undefined || targetDirectory == undefined) {
 }
 
 //Begin
-files.getCSV(substitutionFilename, (data, error) => {
+files.readFile(substitutionFilename, (fileData, error) => {
   handleError(error);
-  substitutions = data;
-
-  console.log(
-    `${substitutions.length} substitutions instructions found in ${substitutionFilename}`
-  );
-  processFiles();
+  files.parseCSV(fileData, (csvData, error1) => {
+    handleError(error1);
+    substitutions = csvData;
+    console.log(
+      `${substitutions.length} substitutions instructions found in ${substitutionFilename}`
+    );
+    processFiles();
+  });
 });
 
 //Termination of application upon error
@@ -41,7 +43,6 @@ function handleError(error) {
   if (error != undefined) {
     console.error(error);
     rl.close();
-    return;
   }
 }
 
